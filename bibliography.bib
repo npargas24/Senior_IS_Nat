@@ -1,0 +1,87 @@
+% Here is a comment.
+
+% Here is an example of how to create a bibliography entry for an article using
+% BibTeX. Generally you won't have to write these out yourself, because they are
+% provided by most web sites that allow you to export citations. The string
+% "article-key" is a citation key, and if you were citing the source in a
+% document you would use \cite{article-key}.
+@book{intelManual,
+author = {?},
+title = {Intel® 64 and IA-32 Architectures Software Developer’s Manual},
+publisher = {Intel},
+year = {2024},
+annote = {Describes the architecture and programming environment of processors supporting IA-32 and Intel® 64 architectures.}
+}
+
+@book{PracticalRE,
+author    = {Bruce Dang, Alexandre Gazet, Elias Bachaalany, Sebastien Josse},
+title     = {Practical Reverse Engineering : X86, X64, ARM, Windows Kernel, Reversing Tools, and Obfuscation},
+publisher = {John Wiley & Sons, Incorporated},
+year      = {2014},
+annote    = {This textbook goes into the weeds of reverse engineering with each of the different most popular instruction set architectures.}
+}
+@book{Reversing,
+author    = {Eilam, Eldad},
+title     = {Reversing : Secrets of Reverse Engineering},
+publisher = {John Wiley & Sons, Incorporated},
+year      = {2005},
+annote    = {This textbook is a comprehensive guide on reverse engineering. It covers all of the tools, methods, applications, and any related information on reverse engineering.}
+}
+@book{MasteringRE,
+author    = {Reginald Wong},
+title     = {Mastering Reverse Engineering},
+publisher = {Packt Publishing},
+year      = {2018},
+annote    = {This textbook is also a general guide on reverse engineering even though it is slightly less comprehensive. It covers some extra information alongside different example problems.}
+}
+@article{AssemblyRe,
+author    = {Mytechnotalent},
+title     = {Reverse Engineering For Everyone!},
+journal   = {Github},
+year      = {2021},
+url     = {https://0xinfection.github.io/reversing/},
+annote    = {This is the holy grail for reverse engineering from Assembly. It starts with explaining the basics and gradually teaches the reader anything they’d need to know for reverse engineering. There’s even specific guides for each low level architecture such as x86 or ARM32. Once they’ve been given all the background information they can ask for, there are multiple example problems with their explanations so they can see how the information is applied. I plan to use the x86 section in this book to guide me on understanding the Assembly code the decompilation of my project will produce.}
+}
+
+@article{ColorDe,
+author    = {Nick Sarno},
+title     = {Color, UIColor, Color Literals, and Hex Colors in SwiftUI | Bootcamp #4},
+journal   = {Youtube},
+year      = {2021},
+url     = { www.youtube.com/watch?v=pqnLevvM7Rs},
+annote    = {This video goes over how to work with colors in Swift. It will be helpful specifically for the RGB slider portion of my project.}
+}
+
+@article{AppDe,
+author    = {Chris Ching},
+title     = {How to Make an App in 8 Days (2024)},
+journal   = {Youtube},
+year      = {2024},
+url     = {youtube.com/playlist?list=PLMRqhzcHGw1Y5Cluhf7pKRNZtKaA3Q4kg&si=CpPRbNJ8wKRW_xXx},
+annote    = {This playlist is similar to the textbook on mobile app development but has some more step by step guides. In it they are creating an app to play the card game War. I will only be using the videos on UI development, Swift Functions, and mobile app Logic. }
+}
+% Other types include book for citing books, inproceedings for conference
+% proceedings, and many other types.
+@book{mobileRe,
+author    = {Abhinav Mishra},
+title     = {Mobile App Reverse Engineering: Get Started with Discovering, Analyzing, and Exploring the Internals of Android and IOS Apps.},
+publisher = {Packt Publishing},
+year      = {2021},
+annote    = {This textbook has been the most used source of my project information thus far. It has a breakdown of how iOS apps are structured as well as the tools needed to reverse engineer them. There is also a general overview of all of the basic iOS reverse engineering methods. Some of the tools it goes over include Ghidra, Radare2 framework, and Frida. Because I am not dealing with encryption, Radare2 and Frida will be less helpful to me. The part on Ghidra static analysis is probably going to be the most helpful. I imagine I will refer to this textbook heavily at the beginning of my project, but need to look to other sources for more thorough breakdowns of Assembly and Ghidra.} 
+}
+
+@book{mobileDe,
+author    = {Iversen, Jakob, and Michael Eierman},
+title     = {Learning Mobile App Development: A Hands-on Guide to Building Apps with IOS and Android},
+publisher = {Addison-Wesley},
+year      = {2014},
+annote    = {This textbook goes over the fundamentals of mobile app development. I will specifically be using the section on iOS development. They offer an overview of Apple’s Xcode programming environment. They cover both interface design and data handling. Both of these parts will be relevant to my project since I’ll be dealing with UI design and color display.}
+}
+
+@book{GhidraRe,
+author    = {A.P. David},
+title     = {Ghidra Software Reverse Engineering for Beginners},
+publisher = {Packt Publishing},
+year      = {2021},
+annote    = {This textbook is a reference for navigating Ghidra. I plan to refer to this textbook when I am stuck on how to handle something in my reverse engineering endeavors. There are a lot of explanations of how to use Ghidra’s expansive tool library as well as how to automate scripts. It even begins with a breakdown of reverse engineering a Hello World program that would’ve been helpful when I was beginning the process of figuring out reverse engineering. The section on creating graphs for functions in Ghidra has already helped to guide me.}
+}

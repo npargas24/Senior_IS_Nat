@@ -1,0 +1,105 @@
+%!TEX root = ../main.tex
+\chapter{Bluetooth}\label{text}
+Bluetooth is an incredibly popular technology that has been expanding rapidly over the past decade. 
+Bluetooth technology was designed to replace the need for short range wired connections. 
+It can be used for pretty much any case that requires data transfer including music streaming, video streaming, medical devices that require constant updating, and more. 
+It works similarly to WiFi, the major difference is that WiFi facilitates internet connection across multiple devices while bluetooth has more limited device connectivity and a lot more variability in its use cases [https://www.intel.com/content/www/us/en/products/docs/wireless/how-does-bluetooth-work.html]. 
+Bluetooth also differs from WiFi in that it is designed for low latency applications that quickly send and receive small chunks of data. 
+
+There are also two main types of bluetooth. 
+There is Bluetooth Basic Rate (BR) or Bluetooth Classic and Bluetooth Low Energy (BLE), the latter has gained much more popularity in modern applications. 
+Bluetooth Basic Rate is the older version of the two and can support audio streaming and data transfer. 
+It was used in versions 1, 2, and 3. It’s mainly used for wireless audio streaming like headphones, speakers, and in-car entertainment systems. 
+It also uses point-to-point device communication. 
+Bluetooth Low Energy is supported in versions 4 and 5 of bluetooth. 
+Bluetooth Low Energy has a more broad range of abilities, it can be utilized for audio streaming, data transfer, device networks, and location services. 
+It is also more flexible in its communication topologies, supporting point-to-point, mesh, and broadcast. Bluetooth LE has also become a popular option for high accuracy location services. 
+It uses relative device positioning using other devices to determine precise location. 
+The architecture of Bluetooth has evolved and expanded as time has gone on.
+
+\section{Architecture}
+Bluetooth Basic Rate and Bluetooth Low Energy both have device discovery, connection establishment, and connection mechanisms [https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Core-54/out/en/architecture,-mixing,-and-conventions/architecture.html].  
+Basic Rate allows users to connect synchronously or asynchronously at data rates of 721.2 kb/s. 
+Bluetooth Basic Rate introduced the option to enhance the connection with Bluetooth Enhanced Data Rate that ups the data rate to 2.1 Mb/s. 
+Bluetooth Low Energy was created to support products that have lower current consumption requirements, lower costs for operation, and lower complexity than BR/EDR. 
+BLE has also been designed for devices that have lower data rates. 
+BLE has an optional 2 Mb/s physical layer data rate and offers isochronous data transfer. 
+
+\subsection{Pairing Based Network}
+The core of bluetooth is creating a network where two (or slightly more) devices pair with each other. 
+The devices being paired can be broken down into the Master and Slave(s). 
+The term master and slave were also specific to classic bluetooth and they can be used interchangeably with the newer terms, Central and Peripheral. 
+The master device coordinates the data being sent between it and any slaves. 
+Coordinating that information includes running the functions necessary for time synchronization, sleep scheduling, and configuration of the channels being used through frequency hopping [next gen bluetooth]. 
+Slave devices can communicate bi-directionally with the master device, sending or receiving data between the master depending on its request. 
+Classic bluetooth mode has two network topology configurations, Piconet and Scatternet. 
+
+\subsection{Piconet}
+A piconet is a type of ad hoc network topology, meaning it operates without preestablished infrastructure. 
+Devices in a piconet communicate directly with one another without the need for a centralized device like a router or access point.
+The network is organized with one master device and one or more slave devices. 
+A single master can support up to seven active slaves, while each slave can only connect to one master [next gen bluetooth].
+The master device controls the timing and synchronization of all devices in the piconet. 
+Slave devices cannot communicate directly with each other; when such communication is needed, the master serves as a relay, forwarding data between the slaves.
+
+\subsection{BR/EDR Piconet}
+All connections made using a BR/EDR controller are made within a piconet. 
+The BR/EDR devices communicate through the same physical channel by synchronizing with a common clock and hopping sequence [bluetooth core spec6].
+The piconet clock also known as the common clock is the same as from the central or master clock and the hopping sequence comes from the central’s clock and the central’s bluetooth device address. 
+
+Multiple independent piconets may exist near one another. 
+
+ 
+
+\section{Protocol Stack}
+
+
+\section{Bluetooth Low Energy(BLE)}
+\subsection{Architecture}
+\subsubsection{Application}
+\subsubsection{Host}
+\subsubsection{Controller}
+
+\subsection{Layers}
+\subsubsection{Physical layer}
+\subsubsection{Link layer}
+\paragraph{Bluetooth Address}
+\subsubsection{HCI Layer ?}
+
+\subsection{Peripherals and centrals}
+\subsubsection{Peripherals}
+\subsubsection{Centrals}
+\subsubsection{Smartphones in BLE}
+
+\subsection{Connection}
+\subsubsection{Connection event}
+\subsubsection{Connection parameters ?}
+\subsubsection{Channel hopping}
+\subsubsection{White list and device filtering ?}
+
+
+\subsection{Services and Characteristics}
+\subsubsection{Attribute Protocol (ATT)}
+\paragraph{UUID}
+\subsubsection{Generic Attributes Table (GATT)}
+\subsubsection{Services}
+\subsubsection{Characteristics}
+\subsubsection{Profiles}
+
+
+\section{BLE Hardware/Software tools}
+
+\subsection{Nordic Semiconductor}
+\subsubsection{NRF connect}
+\subsubsection{NRF UART}
+\subsubsection{NRF Logger}
+
+\subsection{Android BLE}
+\subsubsection{BLE Classes}
+\paragraph{Bluetooth Adapter}
+\paragraph{Bluetooth Gatt}
+\paragraph{Bluetooth GATT Callback}
+\paragraph{Bluetooth GATT service}
+\paragraph{Bluetooth GATT characteristic}
+
+

@@ -1,0 +1,52 @@
+%!TEX root = ../main.tex
+\chapter{Introduction}\label{intro}
+
+\section{What is Reverse Engineering?}
+Reverse Engineering is the process of disassembling something in order to understand how it works. 
+It has been done long before it was used for technology. For example, the dissections that were a common high school experience.
+They were done to break down something as mystifying as life into clear components and functionalities. 
+One of the best ways to fully understand how something works is to open it up.
+
+Reverse engineering software can be done in many ways. 
+The methods of analysis can be divided into two categories, static and dynamic analysis. 
+Static analysis involves combing over a snapshot of the code in a single state.
+ Dynamic analysis is done when the program is being executed and changing states. To start reverse engineering, usually a program’s executable is passed to a disassembler which will break it down into the assembly level code. 
+A programmer can use system monitoring tools to display information that was gathered by the operating system on the program and how it interacts with its environment. 
+A debugger shows what happens in the CPU with the disassembled code one line at a time.
+Using these different tools, the programmer must use their intuition to guide the reversing process. 
+
+There are many reasons why someone might want to reverse engineer software. 
+The only time that the workings of software is available to anyone is when that software is open source.
+Open source software is freely available source code that anyone can view, share, and modify. 
+However, software developers sometimes opt out of publicly distributing the source code. 
+There are a number of potential causes for this, including licensing and ownership issues, the need to preserve proprietary data, or other personal reasons.
+
+Some of the most common reasons a person would choose to reverse engineer software is so that they can perform malware analysis, improve programming skills, recover lost source code, and implement interoperability between programs. 
+My first introduction to reverse engineering was through a video where the creator was reverse engineering Apple’s Facetime for Mac so he could reinstate closed captioning for his hearing impaired mother. 
+The list of uses is as extensive as programs out there.
+
+ Most software developers know reverse engineering in the context of malware analysis. 
+ A classic example is a Trojan virus. Malicious developers can hide malware in programs that are designed to look innocuous. 
+ Breaking apart these programs will unveil the malware hidden inside. Developers also often call on external libraries. 
+ With large projects, keeping track of dependencies can be hard. Hackers can hide entry points in these libraries so they can access unauthorized information. 
+ Reverse engineering is the only foolproof way to reveal exactly what is happening at each step of a program’s execution.
+
+Learning how something is being done can be great to improve skills. 
+Reverse engineering requires extensive knowledge of both assembly code and how high level code structuring. 
+Reverse engineering someone else's code is no simple feat and will cause the reverser to need to learn in depth the possible ways a program could be constructed. 
+This project will be an endeavor in learning both forward engineering and reverse engineering.  
+
+People may reverse engineer their own program to recover lost source code. 
+While this is no easy task, it is possible to use reverse engineering to recover source code. 
+Many software developers know the pain of losing source code and, with an executable, reverse engineering offers a potential solution.
+
+Interoperability is one of the reasons a person might choose to reverse engineer something. 
+This purpose is also only able to be accomplished through reverse engineering. 
+When working with external libraries or operating systems that have documentation on usage but no source code, oftentimes documentation doesn’t cover all use cases. 
+While a programmer could keep throwing things at the wall or try to contact the vendor, reverse engineering provides a surefire way of figuring things out.
+
+\subsection{Purposes}
+\subsubsection{Education}
+\subsubsection{Legacy Systems}
+\subsubsection{Security}
+\subsubsection{Interoperability}
