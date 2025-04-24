@@ -1,4 +1,5 @@
 %!TEX root = ../main.tex
+
 \chapter{Reverse Engineering}
 
 \section{Analysis Methods and Tools}
@@ -74,7 +75,7 @@ Debuggers also offer a clear view of registers and memory to aid in a reverse en
 \paragraph{\underline{User Mode Debuggers}}
 Most debuggers that a programmer will use are user mode debuggers. 
 They run on a system like any other application then seize control of the target program to debug ~\cite{Reversing}.
- An advantage to them is that they are easier to set up and navigate than their kernel-mode counterparts.
+An advantage to them is that they are easier to set up and navigate than their kernel-mode counterparts.
 Usually it’s fine to stay limited to user mode viewing of an application. 
 It only creates troublesome limitations when the target application has kernel mode components such as device drivers. 
 User mode debuggers are also not always sufficient when trying to debug a program before it reaches the main entry point. 
