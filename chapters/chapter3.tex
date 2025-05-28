@@ -1,55 +1,57 @@
 %!TEX root = ../main.tex
 \chapter{Methods}\label{bibind}
-I would highly recommend that you use Bib\LaTeX{} for your bibliography, and that is what this class uses as of August 2022. Bib\LaTeX{} supports foreign languages and UTF-8 and provides several styles for formatting references (ACS, Chicago, APA, Turabian). For many people it also is easier to customize than Bib\TeX{} with natbib, should you need to customize the formatting of references. Bib\LaTeX{} also can make use of the Biber reference processing application which provides support for foreign languages and more sophisticated sorting options than Bib\TeX{}. You still process a special .bib file. The .bib file is where you enter your bibliographic information. Sample entries look something like
-\begin{singlespace}\small
-\begin{verbatim}
-@article{feu02,
-author=		{Thomas Feuerstack},
-title=			{Introduction to pdf{\TeX{}}}, 
-journal=		{TUGboat}, 
-volume=		{23},
-pages=		{329--334},
-number=		{3/4},
-url=			{http://www.tug.org/TUGboat/Articles/tb23-3-4/tb75feu.pdf},
-year=			2002}
-\end{verbatim}
-\end{singlespace}
-or
-\begin{singlespace}\small
-\begin{verbatim}
-@book{mgbcr04,
-author=		{Frank Mittelbach and Michel Goossens and
-Johannes Braams and David Carlisle and Chris Rowley},
-title=			{The \LaTeX\ Companion},
-publisher=		{Addison Wesley Professional},
-edition=		{2nd},
-address=		{New York},
-year=			2004}
-\end{verbatim}
-\end{singlespace}
-
-For a Web site I would recommend the following
-\begin{singlespace}\small
-\begin{verbatim}
-@misc{brei04,
-author = 		{Jon Breitenbucher},
-title = 		{{W}ooster related {L}a{T}e{X} files},
-url = 			{https://woolatex.spaces.wooster.edu},
-howpublished=	{World Wide Web},
-year=			2021,
-note = 		{Accessed on 09/27/2021}}
-\end{verbatim}
-\end{singlespace}
-
-You can make a reference by typing \verb|\citet{mgbcr04}| to produce \citet{mgbcr04}. Other forms for citation include \verb|\citep{mgbcr04}| or  \verb|\citeauthor| \verb|{mgbcr04}| to produce \citep{mgbcr04} or \citeauthor{mgbcr04} respectively. You can consult \citet{kd03} or \citet{mgbcr04} to find out how to format entries in the .bib file and what options each reference type has.\footnote{You could also use footnotes if your department called for that.}
-
-Indicies are also relatively easy to create. If I wanted to have Wooster\index{Wooster} show up in the index, I would enter \verb|Wooster\index{Wooster}| in my source file. I could create a subentry for User Services\index{Wooster!User Services} by entering \verb|User Services|\verb|\index{Wooster!User Services}|. A subsubentry for Help Desk\index{Wooster!User Services!Help Desk} would be entered as \verb|\index{Wooster!User| \verb|Services!Help Desk}|.
-
-To create the index, one needs to make sure to uncomment the \verb|\makeindex| command in the \texttt{main.tex} file. One also needs to uncomment the makeidx entry in the \verb|styles/packages.tex| file and then run the Makeindex program. Consult \citet{kd03} or \citet{mgbcr04} for further information.
+\section{Test 1: Altering the app}
+To ensure that I would be able to successfully complete this project, I first needed to confirm that I could alter the app’s behavior in some meaningful way. At the time, the only tools I had available were my MacBook with Android Studio installed. I was running the app on an emulated Android device and quickly found out that in order to use Frida—the dynamic instrumentation toolkit I planned to rely on—I needed to root the emulator. While I had decompiled parts of the app using Jadx, modifying the code that way wasn’t practical. Decompiled code generally can’t be recompiled cleanly, and reconstructing the original logic is both difficult and time-consuming.
+Given that Frida was going to be the foundation of my approach for real modifications later on, it made the most sense to start testing with it from the beginning. While it’s true that .xapk files for this app weren’t obfuscated and could have been manually edited and re-signed, that path would have diverged from the strategy I’d ultimately use. Instead, I committed to building out a working Frida workflow right away.
+The first step was gathering all necessary tools. This included Frida itself, the frida-server binary compiled for android-arm64 (version 16.7.14), and Objection, a utility built on top of Frida for runtime mobile app exploration. I also installed the Android command line tools directly from Google’s site, which are separate from Android Studio’s full IDE.
+With those in place, I turned to setting up a rooted Android emulator. I used rootAVD, a script that modifies emulators to grant root access. Since I was working on an ARM64 Mac, I selected version 12 (Android S) from rootAVD’s compatibility chart. Using Android Studio, I downloaded the system image for API level 28 with an ARM64 architecture. After confirming the image was downloaded, I launched the emulator from the terminal using the emulator command. I first listed the available virtual devices, then ran the appropriate command to launch the desired AVD.
+Inside the rootAVD directory, I ran the script by typing ./rootAVD.sh. I listed all the AVDs and selected the correct ramdisk.img from the path system-images/android-28/default/arm64-v8a. If everything was patched successfully, the emulator would shut down and then boot up again normally. A grey or black screen during boot was a sign that something had gone wrong. Once the emulator was running again, I verified root access using ADB. I ran adb shell, then typed su, followed by whoami. If the output returned "root," that meant the emulator was successfully rooted.
+At that point, I was ready to run Objection. I launched it in a new terminal window by attaching it to the app’s process using the command objection -g com.loreal.ysl.perso.lips explore. If everything was working correctly, Objection would connect to the app, allowing for runtime exploration and testing.
+Next, I needed to get frida-server running on the device. I navigated to the folder where the binary was located and made it executable with chmod +x. Then I pushed it to the emulator’s file system using ADB. Specifically, I placed it in /data/local/tmp using the command adb push frida-server-16.7.14-android-arm64 /data/local/tmp/frida-server. After entering the device shell and switching to root again with su, I launched the server in the background using ./frida-server &. A successful start would return a process ID.
+With the Frida server running and everything hooked up, I tested a simple proof-of-concept string replacement. I began by choosing the string I wanted to replace: “No activities yet.” To work with it at the memory level, I converted the string to hexadecimal using echo -n "No activities yet" | xxd -p, which gave me the raw hex representation of the text. I then used Frida’s memory search capabilities to locate that hex sequence in the app’s memory.
+Next, I decided on the replacement string—“Natalie activities”—and repeated the process to convert it to hex using the same xxd command. Then I retrieved the process ID (PID) of the running app using adb shell pidof com.loreal.ysl.perso.lips. With that PID, I ran the Frida script I had written to replace the original string with the new one. The command was frida -U -p <PID> -l replace_textview.js. Occasionally, Frida throws unhelpful syntax errors—like missing semicolons—that don’t actually affect runtime behavior. Even if such an error appeared, I would go back to the app, let it load, and check if the text had been replaced. And in this case, once the relevant screen rendered, the string had indeed been swapped out, confirming that the setup was working.
 
 
 
 \section{Environment Setup (components)}
+\subsection{Rooting the phone}
+Rooting the OnePlus 8T was a necessary step for me in the broader context of reverse engineering a mobile application. I had several reasons for wanting to root the device, all of which stemmed from the technical demands of the project I’m working on.
+The first and most pressing reason is that rooting is essential for hooking into the app's internal processes. Through my early experimentation, I discovered that modifying the app’s behavior would require a Man-In-The-Middle (MITM) attack, and tools commonly used for this—such as Frida—typically require root access to function properly.
+Additionally, rooting a device grants access to lower-level Bluetooth packet data, which is crucial for my analysis. On a rooted phone, I can use Frida scripts to log system-level Bluetooth reads and writes that would otherwise be inaccessible. If progress slows using the current toolset, more advanced offensive techniques, such as those available through Kali NetHunter or Ubertooth, may become necessary. These tools also work more effectively on a rooted device.
+Rooting a phone, however, wipes all data stored on it. For this reason, any data I intend to keep must be backed up and restored after rooting is complete. Overall, reverse engineering is an inherently unpredictable process, and having access to a wide range of tools—many of which require root access—means I can pivot more quickly if one approach hits a dead end.
+
+Step 1: Downgrade to Android 11
+The first hurdle in rooting the device was downgrading the operating system. Although I found a guide for rooting the phone on Android 14 (the version it shipped with), it required a specific boot image that I couldn’t locate. My phone’s variant, the OnePlus 8T KB2005 (global version), receives incremental boot image updates, which means a complete boot image for patching and reuploading isn't publicly available.
+I attempted to use a boot image I found online, but it didn’t match my Android version, which resulted in the phone becoming soft-bricked. To resolve this and simplify the patching process, I used the MSM Download Tool to downgrade the device to Android 11. I followed this XDA Developers guide: XDA MSM Tool Guide.
+After connecting the phone to my PC via a trusted USB port, I had to troubleshoot some driver issues. Interestingly, the front USB ports on my PC didn’t recognize the phone reliably, while the back ports—connected directly to the motherboard—worked better. When the device appeared as QHUSB_BULK, I knew the Qualcomm USB drivers were improperly installed. I downloaded the correct drivers from Microsoft’s catalog: Qualcomm USB Drivers.
+Next, I confirmed my build version: kb2005_14.0.0.602(EX01), indicating I had the International model, which uses the KB05AA firmware. I downloaded the corresponding MSM tool and followed these steps:
+Launch MsmDownloadTool V4.0.exe.
+
+
+At the login screen, choose "Other" and click "Next."
+
+
+Select the correct target region (O2 for Global).
+
+
+Press "Start" to initiate the flashing process.
+
+
+Power off the device and allow it to cool.
+
+
+Enter EDL (Emergency Download) mode by holding both volume buttons and plugging the phone into the computer.
+
+
+Wait for the flash to complete (~300 seconds).
+Step 2: Root the Phone
+With the phone successfully downgraded, I proceeded to root it using another guide from XDA. I began by re-enabling Developer Mode, which involved tapping the build number eight times in the settings. Once Developer Mode was active, I enabled USB Debugging and plugged the device back into my computer. To ensure everything was working properly, I ran adb devices and fastboot devices to confirm the device was being recognized. If drivers weren’t functioning correctly, I had to reinstall them.
+Next, I needed to identify which slot the device was currently using. I did this with the command fastboot getvar all, which showed that the current slot was a. With that information, I moved forward with extracting the boot image from the active partition. I used a semi-broken TWRP recovery image that I booted into temporarily with fastboot boot recovery.img. This version of TWRP doesn’t include a GUI but provides ADB shell access, which was all I needed. Inside the shell, I used the dd command to copy the boot_a partition to the SD card. After exiting the shell, I pulled the boot_a.img file from the device using ADB and then rebooted the phone normally.
+Once I had the boot_a.img file on my computer, I transferred it to the phone’s internal storage, placing it in an accessible location like the Downloads folder. I then installed the latest version of the Magisk Canary APK on the phone. Opening the app, I selected the install option and chose "Select and Patch a File," pointing Magisk to the boot_a.img I had extracted earlier. This generated a patched image file named magisk_patched_a.img, which I copied back to my computer.
+To proceed with rooting, I rebooted the phone into fastboot mode using adb reboot bootloader. Instead of flashing the patched image, I temporarily booted into it using the command fastboot boot magisk_patched_a.img. This gave me temporary root access. With the device booted into this patched environment, I opened Magisk again and selected the install option, this time choosing "Direct Install (Recommended)" to apply root access permanently to the internal boot image.
+After the installation completed, I rebooted the phone and used a root checker app to verify that root access was working. Everything checked out, and the device was successfully rooted.
+
+
 \subsection{Virtual Machine}
 \subsection{Tools}
 \subsubsection{JADX}
