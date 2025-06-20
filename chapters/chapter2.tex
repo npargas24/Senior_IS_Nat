@@ -1,5 +1,4 @@
 %!TEX root = ../main.tex
-
 \chapter{Reverse Engineering}
 
 \section{Analysis Methods and Tools}
@@ -21,11 +20,11 @@ Some examples of disassemblers are IDA, Binary Ninja, Hopper, Ollydbug, Radare2,
 
 \subsubsection{Decompiler}
 Decompilers are similar but more complex than disassemblers.
- Instead of just producing the assembly language code, decompilers attempt to produce high-level readable code. 
- They attempt to produce something that looks as close to the source code as possible by reversing the compilation process~\cite{Reversing}. 
- The front end of the decompiler decodes low-level assembly instructions and translates it into an intermediate representation specific to the decompiler. 
- The intermediate representation is then iterated on to remove as many extraneous details as possible while preserving the important details. 
- Lastly the back end takes the polished up intermediate representation and translates it again into a high level language.
+Instead of just producing the assembly language code, decompilers attempt to produce high-level readable code. 
+They attempt to produce something that looks as close to the source code as possible by reversing the compilation process~\cite{Reversing}. 
+The front end of the decompiler decodes low-level assembly instructions and translates it into an intermediate representation specific to the decompiler. 
+The intermediate representation is then iterated on to remove as many extraneous details as possible while preserving the important details. 
+Lastly the back end takes the polished up intermediate representation and translates it again into a high level language.
 
 While this may sound like a simple way to retrieve the source code, it is highly unlikely the high level language returned will be something that actually matches. 
 Anyone who has ever run text through a translation website multiple times knows that each iteration causes a loss in fidelity and oftentimes the end result will be gibberish. 
@@ -176,15 +175,15 @@ Of course, there must be a way to do this because the CPU does it anytime a mode
 But it often involves keeping track of more details than a sole human is capable of. 
 That is why a reverse engineer must develop the skill of parsing through assembly code and being able to create a kind of ‘mental image’ of how it relates to high level constructs.
 Data management is one of the things that a person’s computer keeps track of that would be difficult for a human to do.
- To understand why this is, we can look at the data management of a relatively low level language, C, versus the assembly representation. 
- Consider the code: 
+To understand why this is, we can look at the data management of a relatively low level language, C, versus the assembly representation. 
+Consider the code: 
 \begin{lstlisting}
-
-int divide(int a, int b) {
-    int result;
-    result = a // b;
-    return result;
-}
+	
+	int divide(int a, int b) {
+		int result;
+		result = a // b;
+		return result;
+	}
 \end{lstlisting}
 While this function may seem incredibly simple, there is no direct translation into a machine code representation. 
 To execute this in a low level language, it would require first storing the machine state. 
@@ -212,8 +211,8 @@ For example, it is easy to see when a register is only being used to grant instr
 Another example is when a register shows up many times in one function. 
 This is a good clue that one of the function's local variables is being stored in that register.
 \begin{figure}[h]
-    \caption{Figure modified using Intel® 64 and IA-32 Architectures Software Developer’s Manual and https://flint.cs.yale.edu/cs422/doc/pc-arch.html\#register}
-    \includegraphics[scale=.27]{Register Diagram.jpeg}
+	\caption{Figure modified using Intel® 64 and IA-32 Architectures Software Developer’s Manual and https://flint.cs.yale.edu/cs422/doc/pc-arch.html\#register}
+	\includegraphics[scale=.27]{Register Diagram.jpeg}
 \end{figure}
 
 \subsubsection{The Stack}
@@ -282,8 +281,8 @@ Figure [insert figure here] shows a simple ‘Hello World’ program in C.
 To add some complexity, a few random variables and data structures were thrown in as Easter eggs. 
 This is the program whose decompilation will be used as a jumping off point.
 \begin{figure}[h]
-\caption{Hello World Program}
-\includegraphics[scale=.75]{HelloWorldSource.png}
+	\caption{Hello World Program}
+	\includegraphics[scale=.75]{HelloWorldSource.png}
 \end{figure}
 Figure 3 is the decompilation of the program once it was put through Ghidra. 
 The first thing to note is how with even a relatively low level language like C, the instructions in the code more than doubled. 
@@ -292,8 +291,8 @@ The figure only shows the function section of the program output when imports, e
 One important part of reverse engineering is sorting through all of the information to find out what exactly is important to the reverser. 
 Some reverse engineers refer to this process as finding the shape and edges of the data. 
 \begin{figure}[h]
-\caption{Hello World Disassembly}
-\includegraphics{HelloWorldGhidra.png}
+	\caption{Hello World Disassembly}
+	\includegraphics{HelloWorldGhidra.png}
 \end{figure}
 With the important section identified, it is time to analyze the assembly code.
 One thing to keep in mind with the disassembled code is that all the values will be stored in hexadecimal. 
@@ -314,14 +313,14 @@ This section will cover the process of reverse engineering a simple crack me.
 
 The first step I took in reversing this program was checking the header and libraries as shown in Figure 4 and 5.
 \begin{figure}[h]
-\caption{Crack Me Header}
-\includegraphics{crackmeheader.png}
+	\caption{Crack Me Header}
+	\includegraphics{crackmeheader.png}
 \end{figure}
 \begin{figure}[h]
-\caption{Crack Me Libraries}
-\includegraphics{crackmelibs.png}
+	\caption{Crack Me Libraries}
+	\includegraphics{crackmelibs.png}
 \end{figure}
-  
+
 Both of these steps were done with an executable dumping tool called ‘otool’. 
 The header information shows that the assembly language being used is x86. 
 The library dump shows that the only library being linked is the system library. 
@@ -332,43 +331,43 @@ This is a vital part of reverse engineering and is useful to be able to refer ba
 Figure 6 shows the result of the string dump.
 
 \begin{figure}[h]
-\caption{Crack Me Strings}
-\includegraphics{crackmestrings.png}
+	\caption{Crack Me Strings}
+	\includegraphics{crackmestrings.png}
 \end{figure}
-  
+
 Examining this more closely, you can see that there’s only a few strings that give a very clear idea of what the program is designed to do. 
 There’s a random string, the title of the program, a passphrase prompt, a string indicating the expected input, a congratulations message, and an incorrect guess message. 
 With just this information, you could easily make an educated guess on what the password is. 
 Most likely the passphrase will be the one random string that doesn’t get given easily in the executable. 
 But for the sake of gaining understanding of the process, it’s good to go over the decompiled code. 
 Figure 7 shows the decompiled code.
-  
+
 \begin{figure}[h]
-\caption{Crack Me Ghidra Disassembly}
-\includegraphics{crackmeghidra.png}
+	\caption{Crack Me Ghidra Disassembly}
+	\includegraphics{crackmeghidra.png}
 \end{figure}
-  
+
 The first thing to do is find the entrance into the program. 
 Ghidra already labeled the ‘\_main’ at the top but the strings and function calls reaffirm this as the right section to be looking over. 
 Next, thinking back to the string dump, it’s likely that the password will be near whatever function takes input. 
 Prior knowledge of programming informs the reverser that after getting the user input, the input string will need to be compared to the right answer. 
 Thankfully Ghidra was able to identify the function ‘scanf’.
-  
+
 \begin{figure}[h]
-\caption{Crack Me Code Section 1}
-\includegraphics{crackmescanf.png}
+	\caption{Crack Me Code Section 1}
+	\includegraphics{crackmescanf.png}
 \end{figure}
-  
+
 Inspecting the code section at figure 8, it shows that the variable local\_88 contains the user input. 
 This is because it loads a \%99s into the RDI register to prepare for the input directly above where scanf is called. 
 RSI has local\_1d loaded into it and that variable is immediately ‘strcmp’ compared to local\_88. Using these clues, one could infer that local\_1d contains the password. 
 To verify, a reverser should always retrace and check.
-  
+
 \begin{figure}[h]
-\caption{Crack Me Code Section 2}
-\includegraphics{crackmeRAX.png}
+	\caption{Crack Me Code Section 2}
+	\includegraphics{crackmeRAX.png}
 \end{figure}
-  
+
 The first instance of local\_1d contains the register RAX 9. 
 RAX has the qword ptr ‘ s\_NoxIsTheBest\_100003f26’ moved into it right above. 
 s\_NoxIsTheBest\_100003f25 only contains the string “NoxIsTheBest”. 
@@ -376,31 +375,7 @@ That string is probably the password, but all that’s left is to check.
 Figure 10 shows the result.
 \clearpage
 \begin{figure}[h!]
-\caption{Crack Me Code Executable}
-\includegraphics[]{crackmeexe.png}
+	\caption{Crack Me Code Executable}
+	\includegraphics[]{crackmeexe.png}
 \end{figure}
 The attempt was a success and the crack me was successfully reverse engineered!
-  
-
-\section{Java RE}
-\subsection{JVM}
-\subsection{Reversing Bytecode}
-\subsection{Java Name Obfuscation}
-\subsubsection{Obfuscating names for .class file}
-
-\section{Mobile RE}
-\subsection{Hybrid Approach}
-\subsection{Symbolic Execution}
-\subsection{Generating UML Diagram}
-\subsection{Android}
-\subsubsection{Tools}
-\paragraph{Dalvik VM Android}
-\paragraph{APK Tools}
-\subsection{Apple?}
-\subsubsection{Obj C tools}
-
-
-
-
- 
-
