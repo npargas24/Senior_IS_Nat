@@ -204,6 +204,7 @@ Wireshark is a widely used network protocol analyzer, typically applied to inter
 \subsubsection{Emulator ?}
 
 \section{Scripting}
+Frida accomadates the use of scripts to perform specific functions in conjunction with their application. It is a very useful tool in the reverse engineering process to be able to target and extract specific information. The first script created was one to enumerate the contents of the BLE send function. This function is how any and all BLE communications get broadcast through the application so it holds a wealth of information in terms of figuring out how the device is expecting to receive data. While it is hypothetically possible to hook into the Android library's Bluetooth send function, it is much more difficult to do with less payoff than hooking into the native send function. The send() method was discovered by reading through the decompiled code in jadx. Its existence was verified by listing the methods in the BLEManager class using Frida.
 \begin{lstlisting}
 	Java.perform(function () {
 		var BleManager = Java.use("com.vinsol.loreal.PersoLips.utils.BleManager");
