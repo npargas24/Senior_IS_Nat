@@ -1,39 +1,35 @@
 %!TEX root = ../main.tex
-\chapter{Methods}
-Reverse engineering is a complex process with no universal solution. It often involves extensive trial and error, making it important to adopt a strategy that encourages rapid iteration while minimizing risk. In this case, the most practical approach was to prioritize simplicity and accessibility. The Android version of the app was selected for analysis, as it uses Java and Kotlin—languages that are generally more amenable to reverse engineering. Additionally, a man-in-the-middle (MITM) technique was chosen to intercept and manipulate data exchanged between the app and the target device.
-
-The initial step involved verifying the ability to interact with the app by modifying data in a detectable way. Once this was confirmed, the next objective was to capture the data being transmitted between the app and the makeup printing device, along with identifying the method of transmission. The final step was to replicate that communication in order to send custom data to the device in the expected format.
-
+\chapter{Approaches and Tools}
 Java is particularly well-suited for reverse engineering due to its architecture. It is designed to be platform-independent by running on the Java Virtual Machine (JVM), which functions as an abstract computing environment with its own instruction set and memory model. The JVM interprets a binary format known as a class file, which contains bytecode (JVM instructions), a symbol table, and metadata.
 
-The JVM is stack-oriented, with most operations involving the operand stack in the current execution frame. New frames are created whenever methods are invoked, providing a clear and modular structure. This design simplifies the decompilation and analysis process, which is critical when reconstructing application logic and behavior (Oracle JVM Specification, SE8).
-Figure [insert number] illustrates the flow of data from Java source code through compilation, class loading, bytecode verification, and execution by the JVM.
+The JVM is stack-oriented, with most operations involving the operand stack in the current execution frame. New frames are created whenever methods are invoked, providing a clear and modular structure. This design simplifies the decompilation and analysis process, which is critical when reconstructing application logic and behavior ~\cite{jvms8}.
+Figure\ref{fig:javaprocess} illustrates the flow of data from Java source code through compilation, class loading, bytecode verification, and execution by the JVM.
 \begin{figure}
 	\centering
-	\includegraphics[width=0.7\linewidth]{java_process.png}
+	\includegraphics[scale=.7]{java_process.png}
 	\caption{}
 	\label{fig:javaprocess}
 \end{figure}
 
 The use of class files is one of the key factors that makes reverse engineering Java-based applications more straightforward. Unlike many other languages that are compiled directly into low-level assembly, Java is compiled into bytecode, an intermediate representation that retains a significant amount of the original structure of the source code. This structure provides helpful context for decompilation tools.
-As noted in Covert Java™: Techniques for Decompiling, Patching, and Reverse Engineering by Alex Kalinovsky, “bytecode can be interpreted or compiled after loading, which results in a two-step transformation of the high-level programming language into the low-level machine code. It is the intermediate step that makes decompiling Java bytecode nearly flawless” (javaRE). Bytecode preserves nearly all critical information from the source file, with the exception of comments and formatting. Method names, variables, and control flow are typically intact, making it easier to reconstruct the original logic. Additionally, the stack-oriented design of the Java Virtual Machine (JVM) offers a predictable execution model that further aids analysis.
+As noted in Covert Java™: Techniques for Decompiling, Patching, and Reverse Engineering by Alex Kalinovsky, “bytecode can be interpreted or compiled after loading, which results in a two-step transformation of the high-level programming language into the low-level machine code ~\cite{covertjava}. It is the intermediate step that makes decompiling Java bytecode nearly flawless” (javaRE). Bytecode preserves nearly all critical information from the source file, with the exception of comments and formatting. Method names, variables, and control flow are typically intact, making it easier to reconstruct the original logic. Additionally, the stack-oriented design of the Java Virtual Machine (JVM) offers a predictable execution model that further aids analysis.
 
 The man-in-the-middle (MITM) approach was selected for its relative simplicity compared to full decompilation or bytecode-level modification. In this context, the MITM method refers specifically to intercepting communication between the client application and the device it controls (e.g., a host device such as a Bluetooth-connected peripheral). This strategy includes techniques such as using Bluetooth sniffers to capture transmitted data and injecting code at runtime to observe or alter behavior without directly modifying the underlying APK or its bytecode.
 
-%!TEX root = ../main.tex
+
 \section {A Brief Overview of Android Fundamentals}
 To understand the reverse engineering process of an Android application, it’s helpful to start with some foundational knowledge. At the most basic level, an Android app is made up of activities and layouts. Activities are special classes, typically written in Kotlin, that control how the app behaves and responds to user input. For example, if an app has a button, the activity defines what happens when that button is clicked. 
 
-Most Android apps have one or more screens, and the design of these screens is handled through layout files or directly in the activity code. Layout files are usually written in XML and can include elements like text, images, and buttons (Head First Android Development). Figure [insert number] shows a diagram of activities and layouts. Figure [insert numbah] illustrates how they interact during actual device use.
+Most Android apps have one or more screens, and the design of these screens is handled through layout files or directly in the activity code. Layout files are usually written in XML and can include elements like text, images, and buttons ~\cite{headfirstandroid}. Figure \ref{fig:activitylayout} shows a diagram of activities and layouts. Figure \ref{fig:activitylayoutprocess} illustrates how they interact during actual device use.
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{activity_layout.png}
+	\includegraphics[scale=0.65]{activity_layout.png}
 	\caption{}
 	\label{fig:activitylayout}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{activity_layout_process}
+	\includegraphics[scale=0.35]{activity_layout_process}
 	\caption{}
 	\label{fig:activitylayoutprocess}
 \end{figure}
@@ -61,7 +57,7 @@ If you’re familiar with Android, you’ve probably encountered its fun, food-b
 
 Each version of Android also corresponds to an API level, which is used by apps to ensure compatibility. For example, Android 11 corresponds to API level 30.
 
-Android Studio projects use the Gradle build system to compile and deploy apps. Gradle-based projects follow a standard directory structure, which is shown in Figure [insert number here].
+Android Studio projects use the Gradle build system to compile and deploy apps. Gradle-based projects follow a standard directory structure, which is shown in Figure \ref{fig:gradlebuildstructure}.
 
 % TODO: \usepackage{graphicx} required
 \begin{figure}[H]
@@ -85,7 +81,7 @@ There are two types of services: started services and bound services. A started 
 Broadcast receivers allow the system to deliver messages or events to apps, even if the app isn't currently running. This makes it possible to respond to system-wide events outside of the usual user flow. For example, a scheduled notification could be delivered through a broadcast receiver without needing the app to stay open.
 Content providers manage access to data stored outside of the app itself, such as in a local SQLite database, on the device, or in the cloud. They make it possible for apps to query or modify this data securely. For example, a social networking app might use a content provider to access the user’s device contacts when adding new friends.
 
-When an Android app is packaged and deployed, it’s bundled into a file called an APK (Android Package Kit). This file contains everything needed to install and run the app on a device. Figure [insert number here] outlines the typical structure of an APK.
+When an Android app is packaged and deployed, it’s bundled into a file called an APK (Android Package Kit). This file contains everything needed to install and run the app on a device. Figure \ref{fig:apktoapp} outlines the typical structure of an APK.
 Kotlin source code is compiled into bytecode, and libraries and resources are gathered. These elements are then assembled into the APK. The contents of an APK typically include:
 \begin{enumerate}
 	\item Android launches the app’s main activity.
@@ -100,30 +96,69 @@ All of these components work together to form the complete, installable app pack
 % TODO: \usepackage{graphicx} required
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{apk_to_app.png}
+	\includegraphics[scale=.65]{apk_to_app.png}
 	\caption{}
 	\label{fig:apktoapp}
 \end{figure}
 
+\section{Overview of the YSL Makeup Printer (Rouge Sur Mesure Custom Lip Color Creator)}
+One of the most basic yet crucial steps in reverse engineering a device is acquiring a comprehensive understanding of its functionality. The YSL makeup printer is a unique device, and it is therefore essential to examine its components in order to contextualize any observed or modified behavior.
 
-\section{Test 1: Altering the app}
-To ensure that I would be able to successfully complete this project, I first needed to confirm that I could alter the app’s behavior in some meaningful way. At the time, the only tools I had available were my MacBook with Android Studio installed. I was running the app on an emulated Android device and quickly found out that in order to use Frida—the dynamic instrumentation toolkit I planned to rely on—I needed to root the emulator. While I had decompiled parts of the app using Jadx, modifying the code that way wasn’t practical. Decompiled code generally can’t be recompiled cleanly, and reconstructing the original logic is both difficult and time-consuming.
-Given that Frida was going to be the foundation of my approach for real modifications later on, it made the most sense to start testing with it from the beginning. While it’s true that .xapk files for this app weren’t obfuscated and could have been manually edited and re-signed, that path would have diverged from the strategy I’d ultimately use. Instead, I committed to building out a working Frida workflow right away.
+At its core, the device functions as a lipstick dispenser capable of mixing precise quantities of pigment to produce custom colors. It operates in tandem with the Rouge Sur Mesure application. Within the app, users can select colors in one of three ways: shade matching from photographs, choosing from a color wheel, or employing YSL’s shade stylist, which uses outfit analysis to recommend a complementary lip color. When executing a dispense cycle, the interface progresses through three primary screens. Initially, it displays the selected shade, followed by a progress screen featuring three dots and the label of the inserted color family, and finally the device presents the successfully printed color. According to YSL, “Rouge Sur Mesure uses custom color cartridges and artificial intelligence to make and recommend over 7,000 unique lip colors” (https://www.yslbeautyus.com/rouge-sur-mesure.html?srsltid=AfmBOorRGtCnqu9Hg\_-\_9mebHE1hqicByITz-JtpICKBy8BZVciVP-ml). The system leverages PERSO technology, L’Oréal’s latest innovation in personalized beauty, to analyze user data and tailor product recommendations to each individual. Figure \ref*{fig:makeupprinter} presents an image of the device, Figure \ref{fig:colorwheel} illustrates the color wheel selection interface, and Figure \ref{fig:colorselector} shows the image-based shade matching screen.
+% TODO: \usepackage{graphicx} required
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=1.1]{makeupprinter}
+	\caption{}
+	\label{fig:makeupprinter}
+\end{figure}
 
-The first step was gathering all necessary tools. This included Frida itself, the frida-server binary compiled for android-arm64 (version 16.7.14), and Objection, a utility built on top of Frida for runtime mobile app exploration. I also installed the Android command line tools directly from Google’s site, which are separate from Android Studio’s full IDE.
+% TODO: \usepackage{graphicx} required
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=.7]{colorwheel}
+	\caption{}
+	\label{fig:colorwheel}
+\end{figure}
 
-With those in place, I turned to setting up a rooted Android emulator. I used rootAVD, a script that modifies emulators to grant root access. Since I was working on an ARM64 Mac, I selected version 12 (Android S) from rootAVD’s compatibility chart. Using Android Studio, I downloaded the system image for API level 28 with an ARM64 architecture. After confirming the image was downloaded, I launched the emulator from the terminal using the emulator command. I first listed the available virtual devices, then ran the appropriate command to launch the desired AVD.
+% TODO: \usepackage{graphicx} required
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=.7=]{colorselector}
+	\caption{}
+	\label{fig:colorselector}
+\end{figure}
 
-Inside the rootAVD directory, I ran the script by typing ./rootAVD.sh. I listed all the AVDs and selected the correct ramdisk.img from the path system-images/android-28/default/arm64-v8a. If everything was patched successfully, the emulator would shut down and then boot up again normally. A grey or black screen during boot was a sign that something had gone wrong. Once the emulator was running again, I verified root access using ADB. I ran adb shell, then typed su, followed by whoami. If the output returned "root," that meant the emulator was successfully rooted.
+Despite the promise of limitless customization, the device’s actual capabilities are more constrained. It contains three slots into which cartridges from one of seven color families: red, nude, orange, pink, warm red, warm nude, and cool nude may be inserted. Figure \ref{fig:colorfamilies} displays the color wheel grouped by family, and Figure \ref{fig:cartridges} depicts the physical cartridges, including the cool nude sample used in this analysis. Each color family must be purchased separately, and at the time of writing, the cost per family is approximately \$65 USD.
 
-At that point, I was ready to run Objection. I launched it in a new terminal window by attaching it to the app’s process using the command objection -g com.loreal.ysl.perso.lips explore. If everything was working correctly, Objection would connect to the app, allowing for runtime exploration and testing.
+% TODO: \usepackage{graphicx} required
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=.5]{colorfamilies}
+	\caption{}
+	\label{fig:colorfamilies}
+\end{figure}
 
-Next, I needed to get frida-server running on the device. I navigated to the folder where the binary was located and made it executable with chmod +x. Then I pushed it to the emulator’s file system using ADB. Specifically, I placed it in /data/local/tmp using the command adb push frida-server-16.7.14-android-arm64 /data/local/tmp/frida-server. After entering the device shell and switching to root again with su, I launched the server in the background using \texttt{./frida-server \&}. A successful start would return a process ID.
+% TODO: \usepackage{graphicx} required
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=.5]{cartridges}
+	\caption{}
+	\label{fig:cartridges}
+\end{figure}
 
-With the Frida server running and everything hooked up, I tested a simple proof-of-concept string replacement. I began by choosing the string I wanted to replace: “No activities yet.” To work with it at the memory level, I converted the string to hexadecimal using echo -n "No activities yet" | xxd -p, which gave me the raw hex representation of the text. I then used Frida’s memory search capabilities to locate that hex sequence in the app’s memory.
 
-Next, I decided on the replacement string—“Natalie activities”—and repeated the process to convert it to hex using the same xxd command. Then I retrieved the process ID (PID) of the running app using adb shell pidof com.loreal.ysl.perso.lips. With that PID, I ran the Frida script I had written to replace the original string with the new one. The command was \texttt{frida -U -p <PID> -l replace\_textview.js}. Occasionally, Frida throws unhelpful syntax errors—like missing semicolons—that don’t actually affect runtime behavior. Even if such an error appeared, I would go back to the app, let it load, and check if the text had been replaced. And in this case, once the relevant screen rendered, the string had indeed been swapped out, confirming that the setup was working.
+These limitations reveal that the system does not fully eliminate the need for multiple lipstick purchases. Although the app can generate custom shades within a single color family, the presence of three distinct "nude" families underscores that users must still invest in multiple cartridges to achieve a broad spectrum of tones. Additionally, many users report that the printer struggles to reproduce an exact match for the selected custom color. In my own testing, the device seldom produces an exact duplicate of the chosen shade; instead, it defaults to the closest available hue within the loaded family. To encourage additional purchases, the application will notify users if a slightly closer match exists in an unloaded color family, prompting them to acquire that family.
 
+Understanding the functionality of the device overall is essential for correlating the data captured during reverse engineering with its operational components.
+
+\section{What is the Project Goal?}
+
+Makeup enthusiasts are all too familiar with the struggle of purchasing numerous lipsticks that differ only slightly in shade, all in pursuit of achieving a specific look. One common scenario involves finding inspiration online, seeing a color that looks stunning on a model, and feeling compelled to replicate it, only for the shade to appear entirely different in person. Another frequent challenge is the search for the perfect "your lips but better" shade, which often leads to buying fifteen different options that are eventually discarded because the undertones are too peachy or the shades lean too cool. Both situations reflect a pattern of consumption that is costly and wasteful, yet there remains no clear way to avoid it.
+
+This is the problem that the Rouge Sur Mesure Custom Lip Color Creator by YSL attempts to address. By integrating technology with beauty, the device is designed to allow users to custom-mix lip colors and match nearly any shade. However, the product has received numerous complaints regarding its functionality. Users have specifically criticized the way lipstick colors are grouped, which limits the range of shades the device can produce.
+
+The goal of this project is to investigate the internal workings of the device in detail, to the extent that I can demonstrate my understanding by altering how a dispense occurs without relying on the official app. By gaining a deeper understanding of how the device operates, I hope to improve its capabilities and tailor its behavior to better suit my own needs.
 
 
 \section{Environment Setup}
@@ -198,76 +233,3 @@ Frida is a dynamic instrumentation toolkit used to inject JavaScript snippets or
 
 \subsubsection{Wireshark}
 Wireshark is a widely used network protocol analyzer, typically applied to internet and server traffic. In the context of this project, it was used to analyze Bluetooth communication. Although Wireshark does not natively support capturing Bluetooth packets without additional hardware, it becomes highly effective when paired with a Bluetooth sniffing device. Additionally, it can display Bluetooth logs exported from Android devices with Bluetooth HCI snoop logging enabled. This made it an essential tool for inspecting communication between the app and the connected device.
-
-\subsubsection{JBSE (symbolic Java VM)}
-\subsubsection{UML Diagram Creator (Ask Dr.Guarnera)}
-\subsubsection{Emulator ?}
-
-\section{Scripting}
-Frida accomadates the use of scripts to perform specific functions in conjunction with their application. It is a very useful tool in the reverse engineering process to be able to target and extract specific information. The first script created was one to enumerate the contents of the BLE send function. This function is how any and all BLE communications get broadcast through the application so it holds a wealth of information in terms of figuring out how the device is expecting to receive data. While it is hypothetically possible to hook into the Android library's Bluetooth send function, it is much more difficult to do with less payoff than hooking into the native send function. The send() method was discovered by reading through the decompiled code in jadx. Its existence was verified by listing the methods in the BLEManager class using Frida.
-\begin{lstlisting}
-	Java.perform(function () {
-		var BleManager = Java.use("com.vinsol.loreal.PersoLips.utils.BleManager");
-	\end{lstlisting}
-	Frida has some of its own terminology. \texttt{Java.perform()} is one of the most common Frida methods because it alerts Frida where to hook into the application. Here, Frida is being instructed to hook into the \texttt{BleManager} class.
-	
-	\begin{lstlisting}
-		var originalSend = BleManager.send.overload('[B', 'int');
-	\end{lstlisting}
-	This line saves the original \texttt{send(byte[], int)} function so it can be called as necessary. It will need to be called as usual at the end of enumeration so that there isn’t an interruption in the methods.
-	
-	\begin{lstlisting}
-		function enumerateObject(obj) {
-			try {
-				var objClass = obj.getClass();
-				console.log("Object class: " + objClass.getName());
-				
-				var fields = objClass.getDeclaredFields();
-				for (var i = 0; i < fields.length; i++) {
-					var field = fields[i];
-					field.setAccessible(true);
-					try {
-						var name = field.getName();
-						var value = field.get(obj);
-						console.log("  Name: " + name + " = " + value);
-					} catch (err) {
-						console.log(" Could not access field: " + err);
-					}
-				}
-			} catch (err) {
-				console.log("Error during enumeration: " + err);
-			}
-		}
-	\end{lstlisting}
-	This is the definition for the function to enumerate the contents of each object in the \texttt{send()} function. The \texttt{try\{\}}/\texttt{catch\{\}} allows the function to execute safely without crashing. The \texttt{getClass} Java method gets the class of the object at runtime. It then loops through each field and sets them as accessible. For each field in the loop, it logs the name and object value.
-	
-	\begin{lstlisting}
-		BleManager.send.overload('[B', 'int').implementation = function (bArr, i) {
-			console.log("send() called with device ID: " + i);
-		\end{lstlisting}
-		Here is where the \texttt{send} function actually gets overridden. It starts by logging that the \texttt{send} function was called.
-		
-		\begin{lstlisting}
-			var bytes = Java.array('byte', bArr);
-			var hex = Array.from(bytes).map(function (b) {
-				return ('0' + (b & 0xFF).toString(16)).slice(-2);
-			}).join(' ');
-			console.log("Payload (hex): " + hex);
-		\end{lstlisting}
-		This code segment is where the byte array output of \texttt{send} gets converted into hex to make it easier to read. It starts by turning the Java byte array \texttt{bArr} into a format that can be read by Frida. The bytes are then ANDed with \texttt{0xFF} to convert signed bytes to unsigned. It then converts the result into base 16 (hex). Finally, \texttt{slice(-2)} ensures each value is represented by two characters (zero-padded if needed).
-		
-		\begin{lstlisting}
-			console.log("Enumerating fields of BleManager instance...");
-			enumerateObject(this);
-		\end{lstlisting}
-		This logs and inspects the current \texttt{BleManager} instance — the object calling \texttt{send()}. It gives insight into the app’s internal state at the moment of the call.
-		
-		\begin{lstlisting}
-			return originalSend.call(this, bArr, i);
-\end{lstlisting}
-Finally, the original \texttt{send()} function is called to allow normal app behavior to continue uninterrupted.
-
-
-\section{App Interoperability}
-
-

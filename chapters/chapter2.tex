@@ -1,135 +1,5 @@
 %!TEX root = ../main.tex
-\chapter{Reverse Engineering}
-
-\section{Analysis Methods and Tools}
-\subsection{Static Analysis}
-Static analysis is a practice of analyzing code without executing it. 
-It can  be used to help inform dynamic analysis. 
-Static analysis tools can analyze at either the source code level with code that hasn’t been compiled yet or machine language level with code that has. 
-Static analysis tools can be used by reverse engineers to retrieve and comb over assembly level code.
-This is one of the most basic functions of any static analysis tool, but many of them offer a lot more functionality to help reverse engineers. 
-Most static analysis tools are designed to help give the reverse engineer a starting off point with interpreting assembly level functions.
-
-\subsubsection{Disassembler}
-One of the most key static analysis tools for a reverse engineer is a disassembler. 
-Disassemblers are applications that take in a program’s executable file and generate a file with the assembly code.
-This isn’t too difficult because assembly is just a text translation of the machine readable binary code. 
-Unfortunately, that makes it a lot less clear than higher level programming languages.  
-Disassembly is also unique to a person’s processor, but there are disassemblers that can support more than one CPU architecture.
-Some examples of disassemblers are IDA, Binary Ninja, Hopper, Ollydbug, Radare2, and Ghidra.
-
-\subsubsection{Decompiler}
-Decompilers are similar but more complex than disassemblers.
-Instead of just producing the assembly language code, decompilers attempt to produce high-level readable code. 
-They attempt to produce something that looks as close to the source code as possible by reversing the compilation process~\cite{Reversing}. 
-The front end of the decompiler decodes low-level assembly instructions and translates it into an intermediate representation specific to the decompiler. 
-The intermediate representation is then iterated on to remove as many extraneous details as possible while preserving the important details. 
-Lastly the back end takes the polished up intermediate representation and translates it again into a high level language.
-
-While this may sound like a simple way to retrieve the source code, it is highly unlikely the high level language returned will be something that actually matches. 
-Anyone who has ever run text through a translation website multiple times knows that each iteration causes a loss in fidelity and oftentimes the end result will be gibberish. 
-Decompilers go a step further and have no immediate knowledge of things like function or variable names and structures. 
-This does not make them useless, though. For example, a text translator will usually return your original result when given a simple phrase. 
-Similarly a decompiler will most likely be able to pick up on more straightforward functions such as adding a + b. 
-Decompilers offer hints and snippets into what the source code may look like which is valuable information for a reverse engineer. 
-Most of the examples for disassemblers listed also count as decompilers.
-
-\subsubsection{Dumping Tools}
-Executable dumping is usually the first step in reverse engineering a program. 
-Executable dumping helps inform a reverse engineer what a program does, how it interacts with external elements, and general knowledge of how a file is structured. 
-Using dumping tools, a reverse engineer will start by figuring out what type of file they’re dealing with. 
-They will then start to unpack the format. 
-Extracting strings will immediately offer insight into what language the source code is written in, what library modules it uses, what kinds of data it is dealing with, and what the goals of program functions may be. 
-Other useful information we can retrieve is the layout of the file in memory and what the general logical structure of the file is. Once we know the type of file we also know which tools we can use. 
-For example, some debuggers only work with certain high and low level languages. 
-Some popular executable dumping programs are ones already built into your machine like DUMPBIN for windows or otool for mac. 
-
-Otool is identifies a file's mach header. 
-On systems with a Mach kernel like macOS and iOS, the executable binaries they use will have a mach header. 
-All headers have a magic number to identify them. T
-hin binaries only have that number while fat binaries with fat headers will have locations of the other executable's headers in them
-
-\subsection{Dynamic Analysis}
-Dynamic Analysis occurs when the program or section being analyzed is run during the analysis process. 
-Because dynamic analysis requires the program to execute with unknown results, it is safest to do it in an enclosed or sandboxed environment to protect the rest of the system. 
-Thus easily manipulated virtual machines are usually set up during the dynamic analysis process.
-Many tools can be part of the dynamic analysis process. 
-Anything that needs to run and monitor some output is considered dynamic. 
-Tools may run the full program, a portion of the program, or even just a single line. 
-Tools that monitor the external environment while the program runs are also considered dynamic.
-
-\subsubsection{Debugger}
-Debuggers are a tool usually used for developers to locate and work through errors in their programs, but they’re also vital tools in reverse engineering. 
-Many debuggers can work through assembly language. 
-While assembly language may be difficult for a human to parse through, it is the exact same logic that gets broken down and sent to a computer meaning that the computer can show what each assembly instruction is intended to do. 
-Most debuggers software engineers use were actually designed from the ground up with the purpose of stepping through assembly code. 
-The debugger can show the state of CPU registers along with a memory dump that shows what’s in the stack. 
-Debuggers usually contain disassemblers which as discussed is a vital reverse engineering tool. 
-Many debuggers also contain both software and hardware breakpoints. 
-Software breakpoints are instructions added into the code during runtime to pause and hand control over to the debugger. 
-Hardware breakpoints are a CPU feature which allow the processor to pause execution when a certain memory address is reached and hand control over to the debugger. 
-A reverse engineer can use insert breakpoints at data structures of interest and use the debugger to reveal what they are. 
-Debuggers also offer a clear view of registers and memory to aid in a reverse engineer's ability to process low level information.
-
-\paragraph{\underline{User Mode Debuggers}}
-Most debuggers that a programmer will use are user mode debuggers. 
-They run on a system like any other application then seize control of the target program to debug ~\cite{Reversing}.
-An advantage to them is that they are easier to set up and navigate than their kernel-mode counterparts.
-Usually it’s fine to stay limited to user mode viewing of an application. 
-It only creates troublesome limitations when the target application has kernel mode components such as device drivers. 
-User mode debuggers are also not always sufficient when trying to debug a program before it reaches the main entry point. 
-These kinds of programs are usually ones that have a lot of statically linked libraries in the executable. 
-The final and most likely to be problematic issue is that user-mode debuggers can only view a single process in a program. 
-This can cause issues when the target application has processes that interact in unknown ways. 
-The user may not know which process to zero in on that has the code of interest.
-
-\paragraph{\underline{Kernel Mode Debuggers}}
-Kernel mode debuggers are different from user-mode debuggers because they capture the entire system and not just a single process. 
-Instead of running atop the operating system, kernel mode debuggers sit alongside the system kernel and stay ready to capture the entire system’s stats. 
-Kernel mode debuggers can be more helpful to reverse engineers because they offer more clues as to what’s going on with the system. 
-A key tool for kernel-mode debuggers is that they allow the placement of low level code breakpoints. 
-As a reverse engineer working with assembly code, being able to test different sets of assembly instructions that may be the code section a reverser is looking for is incredibly useful.
-
-For example, picture a scenario where a reverse engineer is looking for the API responsible for handling moving windows? 
-That will need to be managed by a windows manager in the kernel. 
-The complexity is introduced when trying to identify which API moves a particular window. 
-Since there are multiple APIs that can be used to move a window, pinpointing the one you are trying to focus on is a difficult task. 
-This is where kernel mode debuggers come in handy. 
-Low level breakpoints in the operating system responsible for shifting windows around will help you identify which API is getting called when a window is moved~\cite{Reversing}. 
-From there the reverse engineer will be able to hone in on that API.
-
-Unfortunately, kernel mode debuggers come with their own drawbacks. 
-Setting them up can be challenging because they require access to the full system. 
-They need to suspend the entire system while running so they can go line by line, which means the system can no longer have multiple threads going~\cite{Reversing}. 
-They will also usually need to be set up inside a Virtual Machine which will be discussed in a later section~\cite{PracticalRE}. 
-These are reasons why a reverser should exhaust their other options before jumping into using a kernel mode debugger. 
-Still, they are powerful tools when the scenario calls for it.
-
-\subsubsection{System Monitor}
-System monitoring can be a crucial part of the reverse engineering process. 
-In some cases, a reverse engineer can figure out what they need through system monitoring tools without ever looking at the decompiled code. 
-System monitoring tools can capture what happens between the code and hardware using the intermediate channels of input/output~\cite{Reversing}. 
-For local system monitoring, tools monitor things such as file operations (creating, deleting, moving, etc). 
-For programs that communicate over networks, system monitoring might look like recording all TCP/UDP network traffic. 
-System monitoring tools are commonly used in virtual machines.
-
-
-\subsubsection{Virtual Machine}
-Many programmers will encounter virtual machines (VM) at some point during their career. 
-It’s not uncommon for an application to interface exclusively with one type of operating system. 
-One reason is because writing applications to work with different operating systems adds time and complexity that not all programmers can afford.
-Choosing to write in a high level language may make code more portable because there’s more verbose built-in libraries or interpreters that deal with the specifics of the systems without the need for any programmer intervention.
-But high level languages often trade performance for convenience which is not a trade that a developer working with large amounts of data can necessarily afford to take.
-What happens when a developer has an application that runs on Windows while they have a Mac? 
-This is where a virtual machine enters into the mix. Virtual machines are safe sandboxed environments that work as miniature computers with their own operating systems within a computer. 
-They are constructed with an interpreter and bytecode. 
-During compile time, select code snippets are compiled specific for the VM target architecture and then inserted into the program along with the interpreter. 
-During run-time, the interpreter begins executing the bytecode. 
-Virtual machines are costly to implement because they are so expansive which is why only the necessary code snippets get rendered~\cite{MasteringRE}.
-Because virtual machines work in their own isolated environment, they offer powerful protections against unknown or potentially malicious software. 
-This makes them a useful tool for reverse engineers who deal with software that they do not know the contents of. 
-The level of control over virtual machines also makes them a useful tool because there is ultimate knowledge of system conditions.
-
+\chapter{Reverse Engineering Examples and Tests}
 
 \section{Compiled Code RE}
 It is important for a reverser to understand the different goals of high level and low level languages. 
@@ -292,7 +162,7 @@ One important part of reverse engineering is sorting through all of the informat
 Some reverse engineers refer to this process as finding the shape and edges of the data. 
 \begin{figure}[h]
 	\caption{Hello World Disassembly}
-	\includegraphics{HelloWorldGhidra.png}
+	\includegraphics[scale=.3]{HelloWorldGhidra.png}
 \end{figure}
 With the important section identified, it is time to analyze the assembly code.
 One thing to keep in mind with the disassembled code is that all the values will be stored in hexadecimal. 
@@ -344,7 +214,7 @@ Figure 7 shows the decompiled code.
 
 \begin{figure}[h]
 	\caption{Crack Me Ghidra Disassembly}
-	\includegraphics{crackmeghidra.png}
+	\includegraphics[scale=.3]{crackmeghidra.png}
 \end{figure}
 
 The first thing to do is find the entrance into the program. 
@@ -355,7 +225,7 @@ Thankfully Ghidra was able to identify the function ‘scanf’.
 
 \begin{figure}[h]
 	\caption{Crack Me Code Section 1}
-	\includegraphics{crackmescanf.png}
+	\includegraphics[scale=.3]{crackmescanf.png}
 \end{figure}
 
 Inspecting the code section at figure 8, it shows that the variable local\_88 contains the user input. 
@@ -365,7 +235,7 @@ To verify, a reverser should always retrace and check.
 
 \begin{figure}[h]
 	\caption{Crack Me Code Section 2}
-	\includegraphics{crackmeRAX.png}
+	\includegraphics[scale=.3]{crackmeRAX.png}
 \end{figure}
 
 The first instance of local\_1d contains the register RAX 9. 
@@ -379,3 +249,29 @@ Figure 10 shows the result.
 	\includegraphics[]{crackmeexe.png}
 \end{figure}
 The attempt was a success and the crack me was successfully reverse engineered!
+
+\section{Altering the app}
+To ensure that I would be able to successfully complete this project, I first needed to confirm that I could alter the app’s behavior in some meaningful way. At the time, the only tools I had available were my MacBook with Android Studio installed. I was running the app on an emulated Android device and quickly found out that in order to use Frida—the dynamic instrumentation toolkit I planned to rely on—I needed to root the emulator. While I had decompiled parts of the app using Jadx, modifying the code that way wasn’t practical. Decompiled code generally can’t be recompiled cleanly, and reconstructing the original logic is both difficult and time-consuming.
+Given that Frida was going to be the foundation of my approach for real modifications later on, it made the most sense to start testing with it from the beginning. While it’s true that .xapk files for this app weren’t obfuscated and could have been manually edited and re-signed, that path would have diverged from the strategy I’d ultimately use. Instead, I committed to building out a working Frida workflow right away.
+
+The first step was gathering all necessary tools. This included Frida itself, the frida-server binary compiled for android-arm64 (version 16.7.14), and Objection, a utility built on top of Frida for runtime mobile app exploration. I also installed the Android command line tools directly from Google’s site, which are separate from Android Studio’s full IDE.
+
+With those in place, I turned to setting up a rooted Android emulator. I used rootAVD, a script that modifies emulators to grant root access. Since I was working on an ARM64 Mac, I selected version 12 (Android S) from rootAVD’s compatibility chart. Using Android Studio, I downloaded the system image for API level 28 with an ARM64 architecture. After confirming the image was downloaded, I launched the emulator from the terminal using the emulator command. I first listed the available virtual devices, then ran the appropriate command to launch the desired AVD.
+
+Inside the rootAVD directory, I ran the script by typing ./rootAVD.sh. I listed all the AVDs and selected the correct ramdisk.img from the path system-images/android-28/default/arm64-v8a. If everything was patched successfully, the emulator would shut down and then boot up again normally. A grey or black screen during boot was a sign that something had gone wrong. Once the emulator was running again, I verified root access using ADB. I ran adb shell, then typed su, followed by whoami. If the output returned "root," that meant the emulator was successfully rooted.
+
+At that point, I was ready to run Objection. I launched it in a new terminal window by attaching it to the app’s process using the command objection -g com.loreal.ysl.perso.lips explore. If everything was working correctly, Objection would connect to the app, allowing for runtime exploration and testing.
+
+Next, I needed to get frida-server running on the device. I navigated to the folder where the binary was located and made it executable with chmod +x. Then I pushed it to the emulator’s file system using ADB. Specifically, I placed it in /data/local/tmp using the command adb push frida-server-16.7.14-android-arm64 /data/local/tmp/frida-server. After entering the device shell and switching to root again with su, I launched the server in the background using \texttt{./frida-server \&}. A successful start would return a process ID.
+
+With the Frida server running and everything hooked up, I tested a simple proof-of-concept string replacement. I began by choosing the string I wanted to replace: “No activities yet.” To work with it at the memory level, I converted the string to hexadecimal using echo -n "No activities yet" | xxd -p, which gave me the raw hex representation of the text. I then used Frida’s memory search capabilities to locate that hex sequence in the app’s memory.
+
+Next, I decided on the replacement string—“Natalie activities”—and repeated the process to convert it to hex using the same xxd command. Then I retrieved the process ID (PID) of the running app using adb shell pidof com.loreal.ysl.perso.lips. With that PID, I ran the Frida script I had written to replace the original string with the new one. The command was \texttt{frida -U -p <PID> -l replace\_textview.js}. Occasionally, Frida throws unhelpful syntax errors—like missing semicolons—that don’t actually affect runtime behavior. Even if such an error appeared, I would go back to the app, let it load, and check if the text had been replaced. And in this case, once the relevant screen rendered, the string had indeed been swapped out, confirming that the setup was working.
+
+% TODO: \usepackage{graphicx} required
+\begin{figure}
+	\centering
+	\includegraphics[scale=.17]{Natalie_activities}
+	\caption{}
+	\label{fig:natalieactivities}
+\end{figure}

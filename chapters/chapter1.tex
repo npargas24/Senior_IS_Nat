@@ -22,22 +22,24 @@ The core of Bluetooth is creating a network where two (or slightly more) devices
 
 The Central device coordinates the data being sent between it and any Slaves. This includes handling time synchronization, sleep scheduling, and configuring the channels used through frequency hopping \cite{nextgenBLE}. Peripheral devices can communicate bi-directionally with the Master device, sending or receiving data depending on the request.
 
-Figure~\textbf{[insertnumbah from nextgenble]} shows an example of Central and Peripheral devices. Classic Bluetooth includes two network topology configurations: \textbf{Piconet} and \textbf{Scatternet}.
+Figure \ref{fig:centralperipheral} shows an example of Central and Peripheral devices. Classic Bluetooth includes two network topology configurations: \textbf{Piconet} and \textbf{Scatternet}.
 
 \begin{figure}[h]
     \caption{Central and Peripheral device relationship}
-    \includegraphics{centralperipheral.png}
+    \includegraphics[scale=.7]{centralperipheral.png}
+    \label{fig:centralperipheral}
     \end{figure}
 
 \subsection{Piconet}
 
 A piconet is a type of ad hoc network topology that operates without preestablished infrastructure. Devices in a piconet communicate directly with one another without the need for a centralized device like a router or access point. The network is organized with one central device and one or more peripheral devices. A single central can support up to seven active peripherals, while each peripheral can only connect to one central \cite{nextgenBLE}. The central manages the timing and synchronization of all devices in the piconet. Peripheral devices cannot communicate directly with each other; the central acts as a relay, forwarding data between them.
 
-Figure~\textbf{[insertfigurehere]} shows the structure of a piconet.
+Figure \ref{fig:piconet} shows the structure of a piconet.
 
 \begin{figure}[h]
     \caption{Piconet Topology}
-    \includegraphics{piconet.png}
+    \includegraphics[scale=.7]{piconet.png}
+    \label{fig:piconet}
     \end{figure}
 
 All connections made using a BR/EDR controller occur within a piconet. BR/EDR devices communicate over the same physical channel by synchronizing with a shared clock and hopping sequence \cite{bluetoothcorespec6}. The piconet clock follows the central device's clock configuration, and the hopping sequence is also derived from the central’s clock and Bluetooth device address.
@@ -49,13 +51,14 @@ Multiple independent piconets can exist in the same area. Each operates on a sep
 
 A scatternet is formed by connecting multiple piconets together. Unlike a piconet, a peripheral in a scatternet can connect to multiple central devices. Central devices can also connect to each other, sometimes serving dual roles as both central and peripheral.
 
-For example, a scatternet might include a central laptop connected to a Bluetooth speaker, while also acting as a peripheral to a smartphone and printer. Figure~\textbf{[insertnumber]} shows a diagram of a typical scatternet. Despite the increased complexity, peripherals still do not communicate directly with each other.
+For example, a scatternet might include a central laptop connected to a Bluetooth speaker, while also acting as a peripheral to a smartphone and printer. Figure \ref{fig:scatternet} shows a diagram of a typical scatternet. Despite the increased complexity, peripherals still do not communicate directly with each other.
 
 Piconets and scatternets are associated with Classic Bluetooth but are still supported in BLE and later Bluetooth versions \cite{nextgenBLE}. Although BLE—with its advertising mode—has seen growing popularity, traditional Bluetooth methods still offer advantages such as added security during pairing. BLE services enhance the piconet and scatternet model, providing better security, more efficient pairing, and broader support for services.
 
 \begin{figure}[h]
     \caption{Scatteret Topology}
-    \includegraphics{scatternet.png}
+    \includegraphics[scale=.7]{scatternet.png}
+    \label{fig:scatternet}
     \end{figure}
 
 \section{BLE Mesh Networks}
@@ -64,10 +67,11 @@ Mesh networking, introduced with BLE, marks a significant evolution in Bluetooth
 
 This structure ensures a reliable path for data packets. If one path is blocked or unavailable, the network reroutes traffic dynamically. The self-organizing nature of mesh networks means they adapt in real-time to changes, such as nodes joining, leaving, or moving within the network.
 
-For example, Figure~\textbf{[insertnumbah]} shows Device 1 out of range of Device 3. Device 2, within range of both, acts as a router forwarding messages between them.
+For example, Figure \ref{fig:mesh} shows Device 1 out of range of Device 3. Device 2, within range of both, acts as a router forwarding messages between them.
 \begin{figure}[h]
     \caption{Mesh topology}
     \includegraphics{mesh.png}
+    \label{fig:mesh}
     \end{figure}
 
 \section{Broadcast Network from LE}
@@ -86,11 +90,12 @@ This connection-based pairing is what underpins piconets and scatternets. These 
 
 BLE networks can also incorporate mixed topology configurations depending on the use case. A device that supports both BR/EDR and LE can serve as a bridge between traditional Bluetooth and BLE communication, enabling broader interoperability across protocols. The possibilities for combining these configurations are only constrained by the capabilities of the individual devices' radios and protocol stacks.
 
-Figure~\textbf{[insertnumbah]} provides an example of a mixed topology Bluetooth network.
+Figure \ref{fig:mixedtopology} provides an example of a mixed topology Bluetooth network.
 
 \begin{figure}[h]
     \caption{Mixed Topology}
     \includegraphics{mixedtopology.png}
+    \label{fig:mixedtopology}
     \end{figure}
 
 \section{SCO and ACL Logical Transports}
@@ -121,11 +126,12 @@ Unlike ACL links, SCO links don’t carry complex protocols or layered data stru
 
 Bluetooth Low Energy devices communicate with the outside world in two primary ways: \textit{broadcasting} and \textit{connecting}. Both methods are governed by the Generic Access Profile (GAP), which outlines how devices discover and interact with each other \cite{gettingstartedwble}.
 
-Broadcasting enables BLE devices to send data one-way to any scanner or receiver within range. It’s a form of open communication where any nearby device capable of listening can receive the broadcasted data. Figure~\textbf{[insertnumbah]} illustrates this communication model. In the diagram, two roles are shown: the \textit{Broadcaster}, which periodically sends non-connectable advertising packets, and the \textit{Observer}, which continually scans for those packets \cite{gettingstartedwble}.
+Broadcasting enables BLE devices to send data one-way to any scanner or receiver within range. It’s a form of open communication where any nearby device capable of listening can receive the broadcasted data. Figure \ref{fig:broadcastobserve} illustrates this communication model. In the diagram, two roles are shown: the \textit{Broadcaster}, which periodically sends non-connectable advertising packets, and the \textit{Observer}, which continually scans for those packets \cite{gettingstartedwble}.
 
 \begin{figure}[h]
     \caption{Broadcasting and Observing}
     \includegraphics{broadcastobserve.png}
+    \label{fig:broadcastobserve}
     \end{figure}
 
 Broadcasting is a key concept in BLE because it’s the only mechanism that allows a device to communicate with multiple other devices simultaneously. This functionality is made possible by BLE’s advertising feature.
@@ -191,11 +197,12 @@ These profiles demonstrate the flexibility of the BLE specification in accommoda
 
 \section{Bluetooth Low Energy (BLE) Architecture}
 
-Although most users will only ever interact with the top layers of the Bluetooth Low Energy (BLE) protocol stack, having a basic understanding of the full stack can provide helpful context. This overview lays the groundwork for understanding how BLE devices work and why each part of the system is important. A typical single-mode BLE device is made up of three main parts: the controller, the host, and the application. Each of these parts contains multiple layers, each responsible for specific tasks that allow the device to communicate and perform its intended functions. Figure [insertnumah] shows the BLE protocol stack.
+Although most users will only ever interact with the top layers of the Bluetooth Low Energy (BLE) protocol stack, having a basic understanding of the full stack can provide helpful context. This overview lays the groundwork for understanding how BLE devices work and why each part of the system is important. A typical single-mode BLE device is made up of three main parts: the controller, the host, and the application. Each of these parts contains multiple layers, each responsible for specific tasks that allow the device to communicate and perform its intended functions. Figure \ref{fig:bleprotocolstack} shows the BLE protocol stack.
 
 \begin{figure}[h]
     \caption{BLE Protocol Stack}
-    \includegraphics{bleprotocolstack.png}
+    \includegraphics[scale=.7]{bleprotocolstack.png}
+    \label{fig:bleprotocolstack}
     \end{figure}
 
 \subsection{Application}
@@ -283,16 +290,17 @@ This system allows BLE to balance two key goals: persistent connectivity with tr
 
 \section{Host Controller Interface (HCI) Layer}
 
-The Host Controller Interface (HCI) serves as the communication bridge between the host and controller layers in a Bluetooth system. These components can be implemented on the same chipset or on separate chipsets. When they are on separate chipsets, HCI is critical for enabling interoperability and communication between them. In such cases, HCI defines both the standardized protocol and the physical transport mechanisms that facilitate message exchange. As shown in Figure [insertnumbah], the host, HCI, and controller are depicted as distinct components. HCI commonly uses transport technologies such as UART, USB, and SDIO to establish physical connections between the host and controller. When the host and controller are integrated on the same chipset, HCI functions as a logical interface rather than a physical one \cite{introtoble}.
+The Host Controller Interface (HCI) serves as the communication bridge between the host and controller layers in a Bluetooth system. These components can be implemented on the same chipset or on separate chipsets. When they are on separate chipsets, HCI is critical for enabling interoperability and communication between them. In such cases, HCI defines both the standardized protocol and the physical transport mechanisms that facilitate message exchange. As shown in Figure \ref{fig:hosthcicontroller}, the host, HCI, and controller are depicted as distinct components. HCI commonly uses transport technologies such as UART, USB, and SDIO to establish physical connections between the host and controller. When the host and controller are integrated on the same chipset, HCI functions as a logical interface rather than a physical one \cite{introtoble}.
 
 \begin{figure}[h]
     \caption{Host, HCI, and Controller components}
-    \includegraphics{hosthcicontroller.png}
+    \includegraphics[scale=.6]{hosthcicontroller.png}
+    \label{fig:hosthcicontroller}
     \end{figure}
 
 \subsection{Universal Asynchronous Rx/Tx (UART)}
 
-UART is a serial communication protocol that uses wired connections to exchange data between devices. It is commonly found in integrated circuits and is especially favored in devices like mobile phones and laptops, where the entire Bluetooth stack is implemented on a single chipset. UART is also well-suited for small, resource-constrained devices powered by microcontrollers, as it is lightweight and efficient in its use of system resources \cite{nextgenble}.
+UART is a serial communication protocol that uses wired connections to exchange data between devices. It is commonly found in integrated circuits and is especially favored in devices like mobile phones and laptops, where the entire Bluetooth stack is implemented on a single chipset. UART is also well-suited for small, resource-constrained devices powered by microcontrollers, as it is lightweight and efficient in its use of system resources \cite{nextgenBLE}.
 
 In the context of the HCI UART protocol, four types of packet transmissions are defined: the Command packet (identified by 0x01), Event packet (0x04), Asynchronous Connection-Less (ACL) packet (0x02), and Synchronous Connection-Oriented (SCO) packet (0x03). Because the receiving HCI layer cannot distinguish these packet types based on content alone, each transmission begins with a leading byte — known as an indicator — which acts as a header to identify the type of packet that follows \cite{nextgenBLE}.
 
