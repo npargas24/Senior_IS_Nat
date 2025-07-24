@@ -3,10 +3,16 @@
 \section{Bluetooth}
 
 Bluetooth is a widely adopted wireless technology that has seen rapid growth over the past decade. Originally developed to eliminate the need for short-range wired connections, Bluetooth is now used in countless applications—from music and video streaming to medical devices requiring continuous data updates. 
-While it operates similarly to WiFi in some respects, the key difference is its scope: WiFi connects multiple devices to the internet, whereas Bluetooth focuses on direct device-to-device communication and offers more diverse use cases \cite{intelBLEguide}.
+While it operates similarly to WiFi in some respects, the key difference is its scope: WiFi connects multiple devices to the internet, whereas Bluetooth focuses on direct device-to-device communication and offers more diverse use cases \cite{intelBLEguide}. Phones, headphones, cars, watches, keyboards, and countless other devices can all make use of Bluetooth. Any hardware that needs to interface with other devices can be designed to do so via Bluetooth.
+
+\begin{figure}[h]
+    \caption{Bluetooth Devices}
+    \includegraphics[scale=.7]{bluetoothdevices.png}
+    \label{fig:bluetoothdevices}
+    \end{figure}
 
 Another distinction is how Bluetooth is optimized for low-latency applications that transmit small bursts of data quickly and efficiently.
- This makes it ideal for scenarios where power conservation and responsiveness are more important than high throughput.
+This makes it ideal for scenarios where power conservation and responsiveness are more important than high throughput.
 
 \subsection{Bluetooth Types}
 
@@ -18,9 +24,9 @@ Bluetooth Low Energy, introduced in version 4.0 and further enhanced in version 
 
 \section{Pairing-Based Network}
 
-The core of Bluetooth is creating a network where two (or slightly more) devices pair with each other, since Bluetooth was designed to replace corded connections. The devices being paired can be broken down into the \textit{Central} and \textit{Peripheral(s)}. These terms are specific to newer Bluetooth standards and can be used interchangeably with the older terms \textit{Master} and \textit{Slave}.
+The core of Bluetooth is creating a network where two (or slightly more) devices pair with each other, since Bluetooth was designed to replace corded connections. The devices being paired can be broken down into the \textit{Central} and \textit{Peripheral(s)}. These terms are specific to newer Bluetooth standards and can be used interchangeably with the older terms \textit{Master} and \textit{Slave}. In this section, I will use the newer terms.
 
-The Central device coordinates the data being sent between it and any Slaves. This includes handling time synchronization, sleep scheduling, and configuring the channels used through frequency hopping \cite{nextgenBLE}. Peripheral devices can communicate bi-directionally with the Master device, sending or receiving data depending on the request.
+The Central device coordinates the data being sent between it and any Peripherals. This includes handling time synchronization, sleep scheduling, and configuring the channels used through frequency hopping \cite{nextgenBLE}. Peripheral devices can communicate bi-directionally with the Central device, sending or receiving data depending on the request.
 
 Figure \ref{fig:centralperipheral} shows an example of Central and Peripheral devices. Classic Bluetooth includes two network topology configurations: \textbf{Piconet} and \textbf{Scatternet}.
 
